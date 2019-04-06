@@ -3,9 +3,16 @@ language: cpp
 branches:
   only:
     - master
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-7
 before_script:
   - mkdir build
 script:
+  - CXX=/usr/bin/g++-7 CC=/usr/bin/gcc-7
   - cd build
   - cmake ..
   - cmake --build .
