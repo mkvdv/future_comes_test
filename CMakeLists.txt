@@ -24,14 +24,14 @@ macro(set_warning_flags target std_ver)
                 CXX_STANDARD ${std_ver}
                 CXX_STANDARD_REQUIRED ON
                 LINK_LIBRARIES asan
-                COMPILE_OPTIONS "-O2;-Wall;-Wextra;-Werror;-Wpedantic;-ggdb"
+                COMPILE_OPTIONS "-O2;-Wall;-Wextra;-Werror;-Wpedantic;-ggdb;-std=c++${std_ver}"
                 )
     elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         message("!!! CLANG DETECTED !!!!")
         set_target_properties(${target} PROPERTIES
                 CXX_STANDARD ${std_ver}
                 CXX_STANDARD_REQUIRED ON
-                COMPILE_OPTIONS "-O2;-Wall;-Wextra;-Werror;-pedantic"
+                COMPILE_OPTIONS "-O2;-Wall;-Wextra;-Werror;-pedantic;-std=c++${std_ver}"
                 )
     elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         message("!!! MSVC DETECTED !!!!")
