@@ -24,6 +24,14 @@ namespace future_comes_test {
     std::string name() const override;
 
    private:
+    /**
+     * Return iterator to __first__ (leftest, highest) element with
+     * .price() which is __not higher__ than @param price
+     */
+    std::vector<Row>::iterator upper_bound(price_t price);
+    std::vector<Row>::const_iterator upper_bound(price_t price) const;
+
+   private:
     std::vector<Row> m_vec{};
     sum_t m_sum_amount = 0;
   };

@@ -15,13 +15,7 @@ namespace future_comes_test {
        * We capture be reference cause price_t can be changed, and may be
        * copy new price_t type will be expensive (but we are ready for changes =)
        */
-      auto first_lower_then_new_it = std::find_if(
-          m_vec.begin(),
-          m_vec.end(),
-          [&price](const Row &row) {
-              return row.price() <= price;
-          }
-      );
+      auto first_lower_then_new_it = upper_bound(price);
 
       if (first_lower_then_new_it == m_vec.end()) {
           // vec empty or new price is the lowest, so
@@ -38,10 +32,9 @@ namespace future_comes_test {
   }
 
   void VectorOfPairs::remove(const price_t &price) {
-      auto it = std::find_if(m_vec.begin(), m_vec.end(), [&price](const Row &row) {
-          return row.price() == price;
-      });
-      if (it != m_vec.end()) {
+      auto it = upper_bound(price);
+
+      if (it != m_vec.end() && it->price() == price) {
           m_sum_amount -= it->amount();
           m_vec.erase(it);
       }
@@ -52,13 +45,9 @@ namespace future_comes_test {
   }
 
   amount_t VectorOfPairs::get(const price_t &price) const {
-      auto it = std::find_if(
-          m_vec.begin(), m_vec.end(), [&price](const Row &row) {
-              return row.price() == price;
-          }
-      );
+      auto it = upper_bound(price);
 
-      if (it != m_vec.end()) {
+      if (it != m_vec.end() && it->price() == price) {
           return it->amount();
       } else {
           throw std::out_of_range("Can't find price " + std::to_string(price));
@@ -83,6 +72,19 @@ namespace future_comes_test {
 
   std::string VectorOfPairs::name() const {
       return std::string{"Vector of pairs"};
+  }
+  std::vector<Row>::iterator VectorOfPairs::upper_bound(price_t price) {
+      return std::lower_bound(
+          m_vec.begin(),
+          m_vec.end(),
+          price,
+          [](const Row &row, price_t price) {
+              return row.price() > price; // greater -- cause array is sorted in descending order
+          }
+      );
+  }
+  std::vector<Row>::const_iterator VectorOfPairs::upper_bound(price_t price) const {
+      return const_cast<VectorOfPairs *>(this)->upper_bound(price); // the ONLY case where const_cast is reasonable
   }
 
 } // namespace future_comes_test
