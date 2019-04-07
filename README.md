@@ -17,42 +17,42 @@
 ```bash
 > cd build/bin
 > ./future_comes_test file_name 
-# Test real situation of Vector of pairs with file 	file_name 	            --	131315 ms
-# Test real situation of std::map<price_t, amount_t> with file 	file_name 	--	625925 ms
-# Test real situation of AVL tree of pairs with file 	file_name 	        --	673585 ms
+# Test real situation of Vector of pairs with file              short -- 394475 ms
+# Test real situation of std::map<price_t, amount_t> with file  short -- 752914 ms
+# Test real situation of AVL tree of pairs with file            short -- 685296 ms
 
-# Test functions of Vector of pairs with file file_name, results:
-Function add(price_t, amount_t) 	avg time is 354050 ns
-Function remove(price_t) 	avg time is 340963 ns
-Function get_sum_amount() 	avg time is 37.48 ns
-Function get(price_t price) 	avg time is 57840.6 ns
-Function get_first() 	avg time is 103.974 ns
-Function topn( 10 ) 	avg time is 761.657 ns
-Function topn( 500 ) 	avg time is 1819.41 ns
-Function topn( 1000 ) 	avg time is 1159.59 ns
-Function topn( 10000 ) 	avg time is 13951.4 ns
-
-
-# Test functions of std::map<price_t, amount_t> with file file_name, results:
-Function add(price_t, amount_t) 	avg time is 2654.4 ns
-Function remove(price_t) 	avg time is 867.774 ns
-Function get_sum_amount() 	avg time is 57.336 ns
-Function get(price_t price) 	avg time is 263.275 ns
-Function get_first() 	avg time is 272.241 ns
-Function topn( 10 ) 	avg time is 3.02854e+07 ns
-Function topn( 500 ) 	avg time is 3.02784e+07 ns
-Function topn( 1000 ) 	avg time is 3.02867e+07 ns
-Function topn( 10000 ) 	avg time is 3.03189e+07 ns
+# Test functions of Vector of pairs with file short, results:
+Function add(price_t, amount_t) avg time is 3.07572e+06 ns
+Function remove(price_t)        avg time is 3.07386e+06 ns
+Function get_sum_amount()       avg time is 123.799 ns
+Function get(price_t price)     avg time is 320.889 ns
+Function get_first()            avg time is 133.932 ns
+Function topn( 10 )             avg time is 3321.22 ns
+Function topn( 500 )            avg time is 17485.6 ns
+Function topn( 1000 )           avg time is 23570.8 ns
+Function topn( 10000 )          avg time is 176616 ns
 
 
-# Test functions of AVL tree of pairs with file file_name, results:
-Function add(price_t, amount_t) 	avg time is 2806.09 ns
-Function remove(price_t) 	avg time is 953.466 ns
-Function get_sum_amount() 	avg time is 44.903 ns
-Function get(price_t price) 	avg time is 276.115 ns
-Function get_first() 	avg time is 621.968 ns
-Function topn( 10 ) 	avg time is 2.85061e+07 ns
-Function topn( 500 ) 	avg time is 2.85471e+07 ns
-Function topn( 1000 ) 	avg time is 2.85249e+07 ns
-Function topn( 10000 ) 	avg time is 2.84964e+07 ns
+# Test functions of std::map<price_t, amount_t> with file short, results:
+Function add(price_t, amount_t) avg time is 2213.68 ns
+Function remove(price_t)        avg time is 3736.7 ns
+Function get_sum_amount()       avg time is 436.992 ns
+Function get(price_t price)     avg time is 185.236 ns
+Function get_first()            avg time is 275.113 ns
+Function topn( 10 )             avg time is 3.11409e+07 ns
+Function topn( 500 )            avg time is 3.11707e+07 ns
+Function topn( 1000 )           avg time is 3.12034e+07 ns
+Function topn( 10000 )          avg time is 3.15943e+07 ns
+
+
+# Test functions of AVL tree of pairs with file short, results:
+Function add(price_t, amount_t) avg time is 2645.2 ns
+Function remove(price_t)        avg time is 4302.46 ns
+Function get_sum_amount()       avg time is 850.103 ns
+Function get(price_t price)     avg time is 320.522 ns
+Function get_first()            avg time is 208.581 ns
+Function topn( 10 )             avg time is 3.07207e+07 ns
+Function topn( 500 )            avg time is 3.0638e+07 ns
+Function topn( 1000 )           avg time is 3.06493e+07 ns
+Function topn( 10000 )          avg time is 3.12723e+07 ns
 ```
