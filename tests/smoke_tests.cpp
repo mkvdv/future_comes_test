@@ -3,62 +3,85 @@
 #include "../src/storages/stdmap_storage.h"
 #include "../src/storages/avltree_storage.h"
 
+#include <gtest/gtest.h>
+
 #include <numeric>
 #include <iostream>
 #include <sstream>
-#include <gtest/gtest.h>
+#include <random>
 
 namespace {
   void smoke_tests(std::unique_ptr<future_comes_test::IStorage> &&storage) {
       using namespace future_comes_test;
+      using vec_t = std::vector<Row>;
+      using map_t = std::map<price_t, amount_t, std::greater<>>;
 
-      const std::vector<price_t> prices = {1, 500, 10, 100, 4, 16, 8};
-      const std::vector<amount_t> amounts = {1, 2, 3, 4, 5, 6, 7};
-      ASSERT_EQ(prices.size(), amounts.size());
-
-      ASSERT_EQ(storage->size(), 0);
+      map_t map;
+      ASSERT_EQ(storage->size(), map.size());
       ASSERT_TRUE(storage->empty());
 
-      amount_t amount = 0;
-      ASSERT_EQ(storage->get_sum_amount(), amount);
+      auto check_eq = [](const vec_t &vec, const map_t &map) {
+          return std::equal(
+              vec.begin(), vec.end(), map.begin(),
+              [](const Row &row, const map_t::value_type &p) {
+                  return row.price() == p.first && row.amount() == p.second;
+              }
+          );
+      };
 
-      for (size_t i = 0; i != prices.size(); ++i) {
-          storage->add(prices[i], amounts[i]);
-          amount += amounts[i];
-          ASSERT_EQ(storage->get_sum_amount(), amount);
+      std::random_device r;
+      std::mt19937 rng(r());
+      const size_t OPS = 1000;
+      for (size_t i = 0; i != OPS; ++i) {
+          price_t price = rng() % OPS;
+          amount_t amount = rng() % OPS;
+          map[price] = amount;
+          storage->add(price, amount);
+          ASSERT_TRUE(check_eq(storage->topn(storage->size()), map));
+          if (storage->size() == map.size() && !map.empty()) {
+              ASSERT_EQ(storage->get_first().price(), map.begin()->first);
+              ASSERT_EQ(storage->get_first().amount(), map.begin()->second);
+          }
       }
 
-      ASSERT_EQ(storage->size(), prices.size());
+      ASSERT_EQ(storage->size(), map.size());
       ASSERT_FALSE(storage->empty());
 
-      ASSERT_EQ(storage->get_first().price(), 500);
-      ASSERT_EQ(storage->get_first().amount(), 2);
-      ASSERT_EQ(storage->get(500), 2);
-      ASSERT_EQ(storage->get(100), 4);
+      ASSERT_EQ(storage->get_sum_amount(),
+                std::accumulate(
+                    map.begin(), map.end(), 0,
+                    [](size_t acc, const std::pair<const price_t, amount_t> &p) {
+                        return acc + p.second;
+                    }
+                )
+      );
 
-      storage->remove(500);
-      amount -= 2;
-      ASSERT_EQ(storage->get_sum_amount(), amount);
-      ASSERT_EQ(storage->get_first().price(), 100);
-      ASSERT_EQ(storage->get_first().amount(), 4);
+      bool throwed = false;
+      try {
+          storage->get(-1);
+      } catch (const std::out_of_range &) {
+          throwed = true;
+      }
+      ASSERT_TRUE(throwed);
 
-      storage->add(100, 100500); // check update
-      amount = amount - 4 + 100500;
-      ASSERT_EQ(storage->get_sum_amount(), amount);
-      ASSERT_EQ(storage->get_first().price(), 100);
-      ASSERT_EQ(storage->get_first().amount(), 100500);
+      for (size_t i = 0; i != OPS; ++i) {
+          price_t price = rng() % OPS;
+          amount_t amount = rng() % OPS;
 
-      std::vector<future_comes_test::Row> top4 = storage->topn(4);
-      ASSERT_EQ(top4.size(), 4);
-      ASSERT_EQ(top4[0].price(), 100);
-      ASSERT_EQ(top4[0].amount(), 100500);
+          storage->add(price, amount);
+          map[price] = amount;
+          ASSERT_TRUE(check_eq(storage->topn(storage->size()), map));
+          ASSERT_EQ(storage->get(price), map.find(price)->second);
+          if (storage->size() == map.size() && !map.empty()) {
+              ASSERT_EQ(storage->get_first().price(), map.begin()->first);
+              ASSERT_EQ(storage->get_first().amount(), map.begin()->second);
+          }
 
-      ASSERT_EQ(top4[1].price(), 16);
-      ASSERT_EQ(top4[1].amount(), 6);
-      ASSERT_EQ(top4[2].price(), 10);
-      ASSERT_EQ(top4[2].amount(), 3);
-      ASSERT_EQ(top4[3].price(), 8);
-      ASSERT_EQ(top4[3].amount(), 7);
+          storage->remove(price);
+          map.erase(price);
+          ASSERT_TRUE(check_eq(storage->topn(storage->size()), map));
+
+      }
   }
 } // anonymous namespace
 
