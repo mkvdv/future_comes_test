@@ -73,6 +73,7 @@ namespace future_comes_test {
   std::string VectorOfPairs::name() const {
       return std::string{"Vector of pairs"};
   }
+
   std::vector<Row>::iterator VectorOfPairs::upper_bound(price_t price) {
       return std::lower_bound(
           m_vec.begin(),
@@ -83,6 +84,7 @@ namespace future_comes_test {
           }
       );
   }
+
   std::vector<Row>::const_iterator VectorOfPairs::upper_bound(price_t price) const {
       return const_cast<VectorOfPairs *>(this)->upper_bound(price); // the ONLY case where const_cast is reasonable
   }
